@@ -1,0 +1,113 @@
+body {
+    background: #0f0000;
+    color: #000;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin: 0px;
+}
+
+#header {
+    background: #F5DEB3;
+    width: 100%;
+    height: 55px;
+}
+
+#container {
+    background: #000000;
+    margin: auto auto;
+    text-align: center;
+    width: 100%;
+    height: 800px;
+}
+
+#navigation {
+    background: #FE9798;
+    width: 100%;
+    height: 25px;
+}
+
+#sidebar {
+    background: #40E0D0;
+    float: left;
+    width: 20%;
+    height: 380px;
+}
+
+#right-sidebar {
+    background: #00051b;
+    float: right;
+    width: 20%;
+    height: 380px;
+}
+
+#field {
+    background: #000000;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyBzdHlsZT0iY29sb3Itc2NoZW1lOiBsaWdodCBkYXJrOyIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMCAxMCBMIDQwIDEwIE0gMTAgMCBMIDEwIDQwIE0gMCAyMCBMIDQwIDIwIE0gMjAgMCBMIDIwIDQwIE0gMCAzMCBMIDQwIDMwIE0gMzAgMCBMIDMwIDQwIiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOmxpZ2h0LWRhcmsoI2QwZDBkMCwgIzQyNDI0Mik7IiBzdHJva2U9IiNkMGQwZDAiIG9wYWNpdHk9IjAuMiIgc3Ryb2tlLXdpZHRoPSIxIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6bGlnaHQtZGFyaygjZDBkMGQwLCAjNDI0MjQyKTsiIHN0cm9rZT0iI2QwZDBkMCIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+');
+    border: 01px solid white;
+    float: left;
+    width: 59.7%;
+    height: 500px;
+}
+
+#clear {
+    clear: both;
+}
+
+#footer {
+   background: #00BFFF;
+   width: 100%;
+   height: 40px;
+}
+
+
+#contain {
+    display: inline-flex;  
+    background-color: rgb(47, 79, 79);
+    height: 380px;
+    width: 100%;
+    border: wheat solid 1px;
+    
+}
+
+.brick {
+    align-items: center;
+    justify-content: center;
+    padding: 0px;
+    margin: 0px;
+    
+    
+    
+    
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+}   
+
+
+#Circle {
+    margin: auto;
+    display: block;
+    border-radius: 50%;
+    border: 1px solid white;
+    
+}
+
+.Circle {
+    position: absolute;
+    display: flex;
+    border-radius: 50%;
+    border: 1px solid white;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    visibility: ;
+
+}
+
+.Rectangle {}
+
+.Border {
+    border: 2px dashed white;
+    position: absolute;
+}
