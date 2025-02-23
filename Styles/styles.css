@@ -1,0 +1,111 @@
+body {
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+#header {
+    background: #8c6e63;
+    width: 100%;
+    height: 7%;
+}
+
+#container {
+    background: #2e1b19;
+    margin: auto;
+    text-align: center;
+    width: 100%;
+    height: 800px;
+}
+
+#navigation {
+    background: #841818;
+    width: 100%;
+    height: 3%;
+}
+
+#sidebar {
+    display: inline-flex;
+    flex-wrap: wrap;
+    background: #d3a37686;
+    float: left;
+    width: 20%;
+    height: 65%;
+    margin: 0.1%;
+    overflow: hidden;
+    
+}
+
+#right-sidebar {
+    display: inline-flex;
+    flex-wrap: wrap;
+    background: #d3a37686;
+    float: right;
+    width: 20%;
+    height: 65%;
+    margin: 0.1%;
+    overflow: hidden;
+}
+
+#field {
+    background: #000000;
+    border: 0px solid white;
+    float: left;
+    width: 59.4%;
+    height: 65%;
+    overflow:hidden;
+    margin: 0.1%;
+}
+
+#clear {
+    clear: both;
+}
+
+footer {
+  display: inline-flex;
+  background-color: #8c6e63;
+  width: 100%;
+  height: 24.8%;
+}
+
+
+.brick {
+    display: inline-flex;
+    width: 50px;
+    height: 50px;
+    padding: 0px;
+    margin: 0.8%;
+
+    border: 0px solid wheat;
+    border-radius: 20%;
+    
+    background-color: #FFE0B2;
+}   
+
+
+
+
+.Border {
+    border: 2px dashed white;
+    position: absolute;
+}
+
+svg {
+    height: 1000px;
+    width: 1000px;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyBzdHlsZT0iY29sb3Itc2NoZW1lOiBsaWdodCBkYXJrOyIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMCAxMCBMIDQwIDEwIE0gMTAgMCBMIDEwIDQwIE0gMCAyMCBMIDQwIDIwIE0gMjAgMCBMIDIwIDQwIE0gMCAzMCBMIDQwIDMwIE0gMzAgMCBMIDMwIDQwIiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOmxpZ2h0LWRhcmsoI2QwZDBkMCwgIzQyNDI0Mik7IiBzdHJva2U9IiNkMGQwZDAiIG9wYWNpdHk9IjAuMiIgc3Ryb2tlLXdpZHRoPSIxIi8+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6bGlnaHQtZGFyaygjZDBkMGQwLCAjNDI0MjQyKTsiIHN0cm9rZT0iI2QwZDBkMCIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+');
+}
+
+.brick:hover {
+    background-color: #ffe0b28e;
+}
+
+.brick:active {
+    background-color: #FFE0B2;
+}
+
+circle {
+    margin: 10px;
+}

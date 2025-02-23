@@ -3,7 +3,7 @@ let ns = 'http://www.w3.org/2000/svg'
 
 let defaultSetings = {
     stroke: 'white',
-    strokeWidth: '2px',
+    strokeWidth: '4px',
     fill: 'black'
 }
 
@@ -16,53 +16,43 @@ class Line {
         this._setDefaultSettings()
         
        
-        this.updateLine()
+        
         
     }
 
     _setDefaultSettings() {
-        console.log(this.pointers)
+        
         this.createPointer([(field.clientWidth/2 + field.scrollLeft),(field.clientHeight/2 + field.scrollTop)])
         this.createPointer([(field.clientWidth/2 + field.scrollLeft + 50),(field.clientHeight/2 + field.scrollTop)])
          
-        this.stroke = defaultSetings.stroke
-        this.strokeWidth = defaultSetings.strokeWidth
+        
 
 
     }
 
     createPointer(cords) {
-        let pointer = new Pointer(cords)
+        let pointer = new Pointer(cords,this)
         this.pointers.push(pointer)
+        console.dir(pointer)
+        
+        this.update()
+        
+        
 
-        let line = this.updateLine.bind(this)
-        function Movepointer(event) {
-            let X = event.pageX - (event.clientX - event.target.getBoundingClientRect().left)-svgMain.getBoundingClientRect().left
-            let Y = event.pageY - (event.clientY - event.target.getBoundingClientRect().top)- svgMain.getBoundingClientRect().top
-
-            pointer.changeCords(X,Y)
-            line()
-        }
-
-        pointer.point.addEventListener('mousedown', function() {
-            pointer.point.addEventListener('mousemove' , Movepointer)
-        })
-        pointer.point.addEventListener('mouseup', function() {
-            pointer.point.removeEventListener('mousemove' , Movepointer)
-        })
     }
         
         
         
         
+        
 
-    updateLine() {
+    update() {
         this.line.setAttributeNS(null,'d',`M${this.getcords()}`)
     }
     
 
     addIntermediatePoints() {
-
+        
     }
 
     getcords() {
@@ -73,6 +63,7 @@ class Line {
         let line = document.createElementNS(ns,'path')
         line.setAttributeNS(null,'stroke',defaultSetings.stroke)
         line.setAttributeNS(null,'stroke-width', defaultSetings.strokeWidth)
+        line.setAttributeNS(null,'fill', 'none')
         svgMain.insertAdjacentElement('afterbegin', line)
         this.line = line
         
@@ -92,15 +83,21 @@ class Line {
 class Pointer{
 
     constructor(cords, obj) {
-        this.cords = cords
         this.point = this.createPointer(cords)
+        this.point.cords = cords
+        this.point.changeCords = this.changeCords
+        this.point.parent = obj
+        addPointMovements(this.point)
+
+        return this.point
+        
         
     }
 
-    createPointer() {
+    createPointer(cords) {
         let pointer = document.createElementNS(ns,'circle')
-        pointer.setAttributeNS(null,'cx', this.cords[0])
-        pointer.setAttributeNS(null,'cy', this.cords[1])
+        pointer.setAttributeNS(null,'cx', cords[0])
+        pointer.setAttributeNS(null,'cy', cords[1])
         pointer.setAttributeNS(null,'r', 5)
         pointer.setAttributeNS(null,'fill', 'white')
         pointer.setAttribute(null,'draggable', 'true')
@@ -115,10 +112,13 @@ class Pointer{
 
     changeCords(x,y) {
         this.cords = [x,y]
-        this.point.setAttributeNS(null,'cx', x)
-        this.point.setAttributeNS(null,'cy', y)
+        this.setAttributeNS(null,'cx', x)
+        this.setAttributeNS(null,'cy', y)
     }
 }
 
 let line = new Line()
 let point = new Pointer([40,40])
+
+
+
