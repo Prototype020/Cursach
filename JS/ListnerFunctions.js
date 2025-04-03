@@ -2,21 +2,19 @@
 
 const addPointMovements = function(point) {
 
+    //Функция передвигания поинтера
     function Movepointer(event) {
         let X = event.pageX -svgMain.getBoundingClientRect().left 
         let Y = event.pageY - svgMain.getBoundingClientRect().top
         point.changeCords(X,Y)
-        point.parent.update()
-        console.log(point.cords)
     }
-    
-
-
 
     point.addEventListener('mousedown', function() {
+        point.parent.hideMidPointer()
         svgMain.addEventListener('mousemove' , Movepointer)
     })
     document.addEventListener('mouseup', function() {
+        
         svgMain.removeEventListener('mousemove' , Movepointer)
     })
 }
@@ -36,6 +34,8 @@ const addGroupMovments = function(group) {
     border.style.pointerEvents = 'all';
     border.style.cursor = 'move';
 
+   
+    //Показывание границы
     function showBorder() {
         bbox = group.getBBox();
         border.setAttributeNS(null, 'x', bbox.x - 5);
@@ -48,6 +48,7 @@ const addGroupMovments = function(group) {
         }
     }
 
+    //Сворачивание границы
     function hideBorder() {
         if (border.parentNode) {
             border.remove();
@@ -56,12 +57,27 @@ const addGroupMovments = function(group) {
 
     function moveGroup(event) {
         if (!isDragging) return;
-        
+
+        //На сколько перетащен элемент
         let deltaX = event.x - startX;
         let deltaY = event.y - startY;
 
         for (const child of group.elems) {
             const cords = child.cords;
+           
+            //Удаление поинтера перед перетаскиванием
+            if(child.elem.hiddenPointers == false) {
+                child.elem.removePointers()
+
+                if(child.elem.showMidPointer) {
+                    child.elem.hideMidPointer()
+                }
+            }
+            
+            
+            
+
+            // Изменение координат точек линии
             for (let i = 0; i < cords.length; i++) {
                 cords[i][0] += deltaX;
                 cords[i][1] += deltaY;
@@ -71,11 +87,11 @@ const addGroupMovments = function(group) {
         startX = event.x;
         startY = event.y;
         
-        // Update border position
         showBorder();
     }
     
 
+    //Функция вызывающаяся на щелчек вниз
     function handleMouseDown(ev) {
         if(ev.target in group.children) return
         ev.stopPropagation();
@@ -84,13 +100,26 @@ const addGroupMovments = function(group) {
         startY = ev.y;
         isDragging = true;
         
-        
+
         document.addEventListener('mousemove', moveGroup);
         document.addEventListener('mouseup', handleMouseUp);
     }
 
+    //Функция вызывающаяся на щелчек вверх
     function handleMouseUp() {
         isDragging = false;
+
+        //Создание поинтеров
+        for (const child of group.elems) {
+            if(child.elem.hiddenPointers == true) {child.elem.createPointers()
+
+                
+                if(child.elem.showMidPointer) {
+                    child.elem.showMidPointer()
+                }
+            }
+        }
+
         document.removeEventListener('mousemove', moveGroup);
         document.removeEventListener('mouseup', handleMouseUp);
     }
@@ -103,6 +132,21 @@ const addGroupMovments = function(group) {
         if (ev.target !== group && ev.target !== border) {
             hideBorder();
         }
+        if(ev.target == svgMain && ev.target) {
+            for (const child of group.elems) {
+                const cords = child.cords;
+               
+                //Удаление поинтера перед перетаскиванием
+                if(child.elem.hiddenPointers == false) {
+                    child.elem.removePointers()
+    
+                    if(child.elem.showMidPointer) {
+                        child.elem.hideMidPointer()
+                    }
+                }
+                
+            }
+        }
     });
 
     group.addEventListener('DOMNodeRemoved', function() {
@@ -113,36 +157,5 @@ const addGroupMovments = function(group) {
 };
 
 
-function handleMouseMove(event) {
-    // Вычисляем разницу между текущими и начальными координатами
-    let deltaX = event.x - startX;
-    let deltaY = event.y - startY;
 
-    // Применяем разницу к прокрутке
-    field.scrollLeft = startScrollLeft - deltaX;
-    field.scrollTop = startScrollTop - deltaY;
-}
 
-svgMain.addEventListener('mousedown', function(ev) {
-    // Игнорируем, если клик не на svgMain
-    if (ev.target != svgMain) return;
-
-    // Запоминаем начальные координаты и текущую прокрутку
-    startX = ev.x;
-    startY = ev.y;
-    startScrollLeft = field.scrollLeft;
-    startScrollTop = field.scrollTop;
-
-    // Добавляем обработчик перемещения мыши
-    svgMain.addEventListener('mousemove', handleMouseMove);
-});
-
-svgMain.addEventListener('mouseup', function() {
-    // Удаляем обработчик перемещения мыши
-    svgMain.removeEventListener('mousemove', handleMouseMove);
-});
-
-svgMain.addEventListener('mouseleave', function() {
-    // Удаляем обработчик перемещения мыши
-    svgMain.removeEventListener('mousemove', handleMouseMove);
-});

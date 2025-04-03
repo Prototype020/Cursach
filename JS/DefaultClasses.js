@@ -1,40 +1,82 @@
 let svgMain = document.querySelector('#svgMain')
 let ns = 'http://www.w3.org/2000/svg'
 
+
+// Дефолтные параметры элементов
 let defaultSetings = {
-    stroke: 'white',
-    strokeWidth: '4px',
-    fill: 'black'
+    stroke: 'wheat',
+    strokeWidth: '3px',
+    fill: 'none'
 }
 
 
 
 
-
+ // Класс контейнера <g>
 class Container {
     constructor() {
         this.createContainer()
         this.container.elems = []
+        this.container.insert = this.insert
+        this.container.moveTo = this.moveTo
+        this.container.update = this.update
+        this.container.setScale = this.setScale
+        this.container.setTranslate = this.setTranslate
+        return this.container
     }
 
+    //Создание контейнера <g> 
     createContainer() {
         let container = document.createElementNS(ns,'g')
-        svgMain.insertAdjacentElement('beforeend', container)
+        
+        container.scale = 1
+        container.translate = '0, 0'
         
         
-        container.modifyX = 0
-        container.modifyY = 0
+        
+        // Свойства для хранения смещения
+        container.modifyX = 0;
+        container.modifyY = 0;
+        
+        // Текущие координаты группы
+        container.x = 0;
+        container.y = 0;
 
         this.container = container
     }
 
+    setScale(scal) {
+        this.scale = scal
+        this.update()
+        return this
+    }
 
+    setTranslate(translate) {
+        this.translate = translate
+        console.log(this.translate)
+        this.update()
+        return this
+    }
+
+    //Метод добавления дочерних элементов
     insert(elem) {
-        this.container.insertAdjacentElement('beforeend', elem.elem)
+        this.insertAdjacentElement('beforeend', elem.elem)
         
-        this.container.elems.push(elem)
+        this.elems.push(elem)
+    }
+
+   
+    
+    moveTo(x, y) {
+        this.x = x;
+        this.y = y;
+        this.setAttribute('transform', `translate(${x + this.modifyX}, ${y + this.modifyY})`);
     }
     
+
+    update() {
+        this.setAttributeNS(null,'transform', `scale(${this.scale}) translate(${this.translate})`)
+    }
     
 }
 
@@ -47,11 +89,12 @@ class Figure {
 
     }
 
+    //Базовый метод обновления элемента
     update() {
         this.elem.setAttributeNS(null,'d',`M${this.getcords()}`)
     }
 
-
+    //Метод добавление обнавления на изменение значений координат элемента
     setProxyUpdate(arr) {
         if (!Array.isArray(arr)) {
             throw new Error('Input must be an array');
@@ -70,58 +113,16 @@ class Figure {
             }
         });
     }
-}
 
-
-
-
-
-class Line extends Figure{
-
-    constructor(...basicCords) {
-        super()
-
-        this._setDefaultSettings(basicCords) // Создание базовой линии
-
-        this.elem.cords = this.cords
-        
-        
-       
- 
-    
-        
-        
-    }
-
-    _setDefaultSettings(basicCords) {
-
-        let line = document.createElementNS(ns,'path')
-        line.setAttributeNS(null,'stroke',defaultSetings.stroke)
-        line.setAttributeNS(null,'stroke-width', defaultSetings.strokeWidth)
-        line.setAttributeNS(null,'fill', 'none')
-        this.elem = line
-        
-        if(basicCords.toString() == false) {
-            
-        this.cords.push(this.setProxyUpdate[(field.clientWidth/2 + field.scrollLeft),(field.clientHeight/2 + field.scrollTop)])
-        this.cords.push(this.setProxyUpdate[(field.clientWidth/2 + field.scrollLeft + 50),(field.clientHeight/2 + field.scrollTop)])
-        } else {
-            for(let i = 0; i < basicCords.length; i++) {
-                
-                this.cords.push(this.setProxyUpdate(basicCords[i]))
-                
-            }
-        }
-        this.update()
-        
-        
-        
-    }
-    
-    
     //Создание стандартных поинтеров
-    createPointer(cords) {
+    _createPointers(cords) {
+        
+        if(cords == undefined) cords = this.cords
+        
+
         this.pointers = []
+        this.hiddenPointers = false
+
         if(!Array.isArray(cords[0])) {
          this.pointers.push(new Pointer(cords, this))
          return
@@ -132,35 +133,29 @@ class Line extends Figure{
         }
        
         
-        this.update()
+        
+        return this.pointers
         
     }
-    
-    showIntermediatePointer() {
-        for(let i = 0; i < this.cords.length; i++) {
-            let pointer1 = this.cords[i]
-            let pointer2 = this.cords[i+1]
-            
 
+    //Удаление стандартных поинтеров
+    _removePointers() {
+        this.hiddenPointers = true
+        for(let i = 0; i < this.pointers.length; i++) {
+            this.pointers[i].remove()
         }
-        
     }
-        
-        
-   
-        
 
     
 
 
     getcords() {
+        
         return this.cords.join(' ').replaceAll(',', ' ')
     }
 
-    
 
-    
-    
+   
 }
 
 
@@ -169,22 +164,28 @@ class Line extends Figure{
 
 
 
-class Pointer{
 
+
+
+
+
+// Класс поинтеров
+class Pointer{
+    // конструктор принимает координаты поинтера и обьект привязки
     constructor(cords, obj) {
         this.point = this.createPointer(cords)
         this.point.cords = cords
         this.point.changeCords = this.changeCords
         this.point.parent = obj
-        addPointMovements(this.point)
+        addPointMovements(this.point) // Добавление поинтеру листнер передвижения см ListnerFunctions
 
         return this.point
         
         
     }
 
+    //Создание поинтера и вставка его в холст
     createPointer(cords) {
-        console.log(cords)
 
         let pointer = document.createElementNS(ns,'g')
     
@@ -194,62 +195,38 @@ class Pointer{
         img.setAttributeNS(null,'height', 18)
         img.setAttributeNS(null,'x', cords[0]-10)
         img.setAttributeNS(null,'y', cords[1]-10)
-        img.setAttribute('draggable', 'false')
+        img.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+          });
         
         pointer.img = img
         pointer.insertAdjacentElement('afterbegin', img)
-        svgMain.insertAdjacentElement('beforeend',pointer)
+        svgMain.insertAdjacentElement('beforeend', pointer)
         
         return pointer
 
     }
 
+    
 
 
+    //Метод изменения координат поинтера
     changeCords(x,y) {
         this.cords[0] = x
         this.cords[1] = y
         this.img.setAttributeNS(null,'x', x-9)
         this.img.setAttributeNS(null,'y', y-9)
     }
-}
 
-
-
-
-
-
-let point = new Pointer([40,40])
-
-
-
-class Arrow{
-
-    constructor() {
-        this.createArrow()
-        addGroupMovments(this.container.container)
-    }
-
-
-    createArrow() {
-        this.container = new Container()
-        
-        this.container.insert(new Line([200,200],[200,250]))
-        this.container.insert(new Line([300,200],[300,250]))
-        
+    //Метод удаления поинтера
+    remove() {
+        this.point.remove()
     }
 }
 
 
-class hz {
-    constructor() {
-        let container = new Container()
-let line = new Line([200,200],[300,300])
-container.insert(line)
-addGroupMovments(container.container)
-return line
-    }
-}
-let line = new hz()
 
-line.createPointer(line.cords)
+
+
+
+
