@@ -6,12 +6,13 @@ class Line extends Figure{
         this._setDefaultSettings(basicCords) // Создание базовой линии
 
         this.elem.cords = this.cords
-            this.elem.createPointers = this._createPointers
+            this.elem.createPointers = () => {}
             this.elem.removePointers = this._removePointers
-            this.elem.showMidPointer = this._showMidPointer
-            this.elem.hideMidPointer = this._hideMidPointer
+            this.elem._hideMidPointer = this._hideMidPointer
+            this.elem._showMidPointer = this._showMidPointer
             this.elem.hiddenPointers = true
-        this.elem.par = this
+            this.elem.update = this.update.bind(this)
+            this.elem.par = this
         
        
  
@@ -46,13 +47,23 @@ class Line extends Figure{
     }
     
 
+    _removePointers() {
+        super._removePointers()
+        this._hideMidPointer()
+    }
+
+    _createPointers() {
+        super._createPointers()
+        this._showMidPointer()
+    }
+
     
     
     _showMidPointer() {
 
         
-        let cords = this.cords
-
+        const cords = this.cords
+        const upd = this.update.bind(this)
 
         let midPointers = []
         this.midPointers = midPointers
@@ -65,20 +76,33 @@ class Line extends Figure{
             let newCords = [(cords2[0] + cords1[0])/2, (cords2[1] + cords1[1])/2]
             let newPointer = new Pointer(newCords, this)
             newPointer.setAttributeNS(null, 'opacity', 0.6)
+
+            let isDel = false;
+            
             
 
             midPointers.push(newPointer)
 
-            newPointer.addEventListener('mousedown', (ev) => {
+            function fromMidToMain(ev) {
                 cords.splice(i+1, 0, this.par.setProxyUpdate(newCords))
-                this.hideMidPointer()
-                this.removePointers()
-                this.createPointers()
-                this.showMidPointer()
+                this.pointers.push(newPointer)
+                newPointer.setAttributeNS(null, 'opacity', 1)
 
-
+                this._hideMidPointer(newPointer)
+                this._showMidPointer()
                 
-            })
+            }
+
+            fromMidToMain = fromMidToMain.bind(this)
+
+            newPointer.addEventListener('mousedown', fromMidToMain)
+
+            newPointer.addEventListener('mouseup', () => {
+                if(isDel) return
+                newPointer.removeEventListener('mousedown', fromMidToMain)
+                isDel = true
+             })
+            
 
 
 
@@ -89,9 +113,9 @@ class Line extends Figure{
     }
 
     
-    _hideMidPointer() {
-        console.log(this.midPointers)
+    _hideMidPointer(pointer) {
         for(let i = 0; i < this.midPointers.length; i++) {
+            if(this.midPointers[i] == pointer) continue;
             this.midPointers[i].remove()
         }
         this.midPointers = []
